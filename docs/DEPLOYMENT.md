@@ -1,16 +1,31 @@
-# Deployment checklist
+# Deploy
 
-The application has not been deployed and no paid service has been connected. This document describes the supplied deployment path.
+## Free interactive presentation
 
-1. Provision PostgreSQL and private S3-compatible storage. Back up both and test restoration. Use distinct application credentials and private bucket policies.
-2. Configure the server environment from `.env.example`. Use an HTTPS `APP_URL`. Do not expose database, storage, SMTP or OpenAI keys using `NEXT_PUBLIC_*` variables. Remove `SEED_DEMO_PASSWORD` from production.
-3. Run `npm ci`, `npm run db:generate`, `npm run db:migrate`, and `npm run build` in your release pipeline. Migrations do not execute automatically when starting the web process.
-4. Run `npm start` behind a TLS reverse proxy. The provided Dockerfile uses Node 24 and explicitly binds Next.js to `0.0.0.0`; non-container `npm start` binds loopback by default.
-5. Run `npm run worker` as a separate supervised process with shared database/S3 environment. The web app alone saves projects and enqueues jobs, but cannot process them without a worker.
-6. Enable SMTP and email verification only after testing delivery. Configure a supported OpenAI image editing model and monitor usage before enabling paid generation. Platform cost estimates are configurable estimates, not provider invoices.
-7. Create the first admin through your trusted database administration process; public registration excludes ADMIN. Do not seed demo data into production. Admin manual billing confirmation requires externally verified receipt; no payment gateway is installed.
-8. Run smoke tests using separate test accounts, monitor structured API/job errors and PostgreSQL health, and configure retention, incident response and user support workflows.
+The static review reuses the product homepage and shoppable-room React component. It includes home/office/studio samples, before/after controls and on-photo furniture price/seller hover. Images and prices are labeled as prepared demo data. It does not call live AI or submit orders.
 
-`compose.yaml` provisions local PostgreSQL and MinIO only. Its default credentials and loopback ports are development settings. Docker/MinIO container execution remains unverified when Docker is unavailable in the current workstation; this must be checked on the deployment host. A single stage copy of runtime dependencies is used for maintainability; optimize to standalone output separately if required.
+```sh
+npm run deploy:review
+```
 
-Service integrations still needing credentials: OpenAI, production S3 and SMTP. Live payment processing, OAuth, multilingual translation, infrastructure observability and automated retention policies are outside the delivered version. Review local policy/terms text for the actual operator before commercial launch.
+Requires GitHub CLI authentication and committed changes. The script pushes `main`, configures Pages, starts the deployment workflow, waits for success, and updates README with the returned URL. It never force-pushes or changes repository visibility.
+
+Manual alternative: push the repository; select **Settings → Pages → Source → GitHub Actions**; run **Actions → Deploy public review**. The successful `github-pages` environment contains the actual URL. Expected default address: `https://yusifmmdv.github.io/Mekan-AI/` — deployment must succeed before sharing it.
+
+```sh
+npm run build:review
+# Repository subpath:
+REVIEW_BASE_PATH=/Mekan-AI/ npm run build:review
+```
+
+Upload `review-dist/` to a static host. It contains HTML, CSS, JS and public sample assets; no secrets or private uploads. [Official Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+
+## Full application
+
+Use a Docker-capable Node.js web service, a separate worker, PostgreSQL and shared private S3-compatible storage. Set `APP_URL` to the actual HTTPS origin. Share database and storage settings between web and worker. Set `HF_TOKEN` as a server secret and keep both paid-AI flags false. The worker also needs Python and prepared Grounding DINO weights. Apply migrations, then seed the private demo database with your own demo password. Ephemeral web-host filesystems cannot preserve uploaded images.
+
+The repository Dockerfile serves the web app on `0.0.0.0` and respects `PORT`. Python detector dependencies need a separate compatible worker image/environment. Full backend hosting has not been deployed or verified here. [Render service types](https://render.com/docs/service-types) and [free-plan limits](https://render.com/docs/free).
+
+## Current status
+
+Direct GitHub API/push and the Sites source endpoint fail DNS resolution in this execution environment. A Sites project was registered but no version was published. Its identity is retained at `/Users/yusif/mekan-ai-public/.openai/hosting.json`; reuse it if resuming Sites deployment. No live URL is claimed until deployment succeeds.

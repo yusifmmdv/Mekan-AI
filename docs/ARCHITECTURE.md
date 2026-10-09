@@ -22,10 +22,12 @@ Run the web app and worker separately with shared PostgreSQL and S3. Migrations 
 
 Executed `npm audit --omit=dev`: zero reported vulnerabilities at implementation time. Full `npm audit` reports five high findings in the development ESLint dependency chain (`braces`, `micromatch`, `fast-glob`, `@next/eslint-plugin-next`, `eslint-config-next`). The compatible scoped overrides reduce other findings; those remaining require upstream fixes/compatible upgrades. They are not production runtime dependencies. Re-run audits before deployment because advisories change.
 
-## Free local inference
+## AI generation and furniture discovery
 
-The default provider is a token-protected loopback Stable Diffusion image-to-image service. Model weights are downloaded during explicit setup; inference uses locally cached weights. Local jobs consume zero credits and record zero provider cost. Paid OpenAI calls require both explicit `PAID_AI_ENABLED=true` and `ALLOW_PAID_AI=true` settings as well as a server-side key. See [LOCAL_AI.md](LOCAL_AI.md) for setup and quality limits.
+The current free provider is the official Qwen Image Edit Hugging Face Space. Free-provider jobs consume zero credits. Paid providers require both explicit paid flags and a server-side key. Generated images are stored before a separate durable furniture analysis job runs Grounding DINO locally. Matching resolves similar active, in-stock products against the project room type, budget, style and colours. Detector failure preserves the design image and allows retry.
 
-## Interactive 2D furniture editing
+The shoppable-room component overlays interactive furniture regions directly on the photo. Hover, focus or touch opens a bounded on-photo product card; the full application's cart and order operations retain authorization and stock validation. Public prepared examples use manually inspected regions and clearly identified demo data. The 2D editor is removed; historical database records remain intact.
 
-`RoomDesign` stores an owner-authorized background asset, a validated JSON scene and an optimistic version. Canvas coordinates are fixed1000×750 and responsive rendering scales the stage. Width/height persist the normalized object scale relative to240×180 assets. Konva holds editable transparent overlays separately from the locked photo; history is immutable and bounded to50 undo snapshots. Saved scenes restore product IDs; product information is resolved against approved, active marketplace records. Cart actions reuse existing stock and authorization checks. The editor has no inference or billing dependency.
+## Public review deployment
+
+The review build shares the homepage and room interaction components, replaces server navigation with explicit presentation/documentation links, and emits static HTML/CSS/JS without credentials. GitHub Pages hosts this presentation; the full application still requires PostgreSQL, shared private storage and a worker. See DEPLOYMENT.md.

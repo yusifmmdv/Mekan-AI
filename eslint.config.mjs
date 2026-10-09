@@ -5,7 +5,7 @@ export default defineConfig([
   ...nextVitals,
   ...nextTs,
   globalIgnores([
-    ".next/**",
+    ".next/**", "review-dist/**", "review/.render.mjs",
     "node_modules/**",
     "generated/**",
     ".local-ai/**",

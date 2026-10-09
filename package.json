@@ -20,7 +20,9 @@
     "demo": "node scripts/demo.mjs",
     "demo:setup": "node scripts/demo-setup.mjs",
     "ai:detect:prepare": "node scripts/prepare-detector.mjs",
-    "test:public": "node scripts/verify-public.mjs"
+    "test:public": "node scripts/verify-public.mjs",
+    "build:review": "node scripts/build-review.mjs",
+    "deploy:review": "node scripts/publish-review.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "latest",
@@ -57,8 +59,10 @@
     "@types/pg": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "esbuild": "0.28.2",
     "eslint": "latest",
     "eslint-config-next": "16.4.0",
+    "postcss": "8.5.29",
     "prisma": "7.10.0",
     "tailwindcss": "latest",
     "tsx": "latest",

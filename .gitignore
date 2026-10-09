@@ -10,3 +10,5 @@ test-results/
 
 .local-ai/
 __pycache__/
+review-dist/
+review/.render.mjs

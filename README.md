@@ -1,10 +1,46 @@
 # Mekan AI
 
+### Boş otaqdan dizayna, dizayndan həyata.
+
+[Təqdimat ssenarisi](docs/HACKATHON.md) · [Arxitektura](docs/ARCHITECTURE.md) · [Yoxlama nəticələri](docs/AI_DEMO_VERIFICATION.md) · [Deploy təlimatı](docs/DEPLOYMENT.md)
+
+<!-- review-url:start -->
+**Onlayn demo:** yayımlanma gözlənilir. [Deploy vəziyyətinə baxın](https://github.com/yusifmmdv/Mekan-AI/actions/workflows/deploy-review.yml). Uğurlu deploy-dan sonra real link burada yenilənir.
+<!-- review-url:end -->
+
 **Boş otaqdan dizayna, dizayndan sifarişə.** Azərbaycan dilində ev, ofis və yaradıcı studiyalar üçün AI interyer dizaynı və mebel kəşfi startup prototipi.
 
 ![Mekan AI — hazır ev dizaynı](public/demo/home.png)
 
 İstifadəçi otaq şəklini yükləyir, üslub və büdcə seçir, AI dizaynı yaradır. Nəticədə mebelin üzərinə gələndə **şəklin üzərində** oxşar kataloq məhsulu, AZN qiyməti və satıcı kartı açılır. Məhsul səbətə əlavə edilir, mağazaya sifariş sorğusu və dizaynerə layihə brifi göndərilir.
+
+## Problem və həll
+
+Otağın necə görünəcəyini təsəvvür etmək, uyğun mebel tapmaq və dizaynı həyata keçirəcək mütəxəssis seçmək ayrı-ayrı proseslərdir. Mekan AI bunları bir istifadəçi axınında birləşdirir:
+
+**Otaq şəkli → AI dizaynı → şəkildə mebel kəşfi → sifariş sorğusu → dizaynerlə icra.**
+
+## Məhsulun imkanları
+
+| İmkan | İstifadəçi təcrübəsi |
+| --- | --- |
+| AI interyer dizaynı | Ev, ofis və studiya üçün şəkil, üslub və büdcə əsasında dizayn |
+| Şəkildə mebel kəşfi | Mouse və ya toxunuşla kart birbaşa şəklin üzərində açılır |
+| Qiymət və satıcı | Oxşar kataloq məhsulu, AZN qiyməti və satıcı |
+| Səbət və sifariş | Məhsul seçimi və mağazaya sifariş sorğusu |
+| Dizaynerlə icra | Layihəni həyata keçirəcək mütəxəssisə müraciət |
+| Biznes kabinetləri | Müştəri, mağaza, dizayner və administrator rolları |
+
+Mebel uyğunluğu oxşar məhsul səviyyəsindədir; dəqiq marka/model identifikasiyası kimi göstərilmir. Sifarişlər bazada saxlanılan sorğulardır; onlayn ödəniş tutulmur.
+
+## Münsiflər üçün 60 saniyəlik baxış
+
+1. İnteraktiv nümunələrdə **Ev / Ofis / Studiya** seçin.
+2. **Boş otaq / AI dizayn** düymələri ilə görüntüləri müqayisə edin.
+3. Şəkildə divan, masa və ya kreslonun üzərinə gəlin: qiymət və satıcı kartı şəklin üzərində açılır. Mobil cihazda toxunun.
+4. Tam lokal demoda nümunəni şəxsi layihə kimi açın, mebeli səbətə əlavə edin, sifariş və dizayner müraciəti yaradın.
+
+Açıq təqdimat build-i məhsulun mövcud React komponentlərini istifadə edir və giriş tələb etmir. Burada hazır nümunələr və hover işləyir; canlı AI, hesab, səbət və sifariş üçün tam tətbiq lazımdır.
 
 ## Ən sürətli baxış — AI tokeni və baza olmadan
 
@@ -94,3 +130,13 @@ npm run test:e2e
 [Hakaton ssenarisi](docs/HACKATHON.md) · [Cari yoxlama vəziyyəti](docs/AI_DEMO_VERIFICATION.md) · [Arxitektura](docs/ARCHITECTURE.md).
 
 GitHub Actions lokal unit/integration/brauzer axınlarını yoxlayır; canlı xarici AI çağırışı etmir. Heç bir API açarı, `.env`, şəxsi şəkil, model çəkisi və lokal baza repoya daxil edilmir.
+
+## Onlayn təqdimatı yayımlamaq
+
+GitHub CLI-də hesabınıza giriş varsa:
+
+```sh
+npm run deploy:review
+```
+
+Əmr layihəni push edir, GitHub Pages-i hazırlayır, deploy nəticəsini gözləyir və uğurlu URL-i README-yə əlavə edir. Giriş yoxdursa əvvəl `gh auth login` işlədin. Açıq təqdimatda ev/ofis/studiya nümunələri və şəkildə mebel hover işləyir. Tam tətbiqin PostgreSQL, worker və şəxsi storage tələbləri [deploy təlimatında](docs/DEPLOYMENT.md) göstərilir.

@@ -27,4 +27,4 @@ Date: 9 October 2026. This report supersedes older UI/editor completion claims f
 4. Run `npm run test:integration` with the worker stopped, and `npm run test:e2e`.
 5. If the free service has no available quota, present the prepared examples as prepared examples. Never claim an unavailable generation succeeded.
 
-No external deployment or GitHub push was performed. `.env`, credentials, model weights, personal uploads and local database state remain excluded from git.
+The public review build is prepared for static hosting, with shared on-photo interactions and a GitHub Pages workflow. GitHub and Sites source pushes failed DNS resolution; no live deployment is claimed. A Sites registration exists, but no version was saved or published. `.env`, credentials, model weights, personal uploads and local database state remain excluded from git.
