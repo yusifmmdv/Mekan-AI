@@ -1,7 +1,7 @@
 export const faqs = [
   [
     "AI dizaynı necə yaradılır?",
-    "Otağınızın şəklini yükləyin, üslub və büdcə seçin. Konfiqurasiya edilmiş AI xidməti şəkliniz əsasında interyer vizualizasiyası hazırlayır. Nəticə dəqiq ölçü planı deyil.",
+    "Otağınızın şəklini yükləyin, üslub və büdcə seçin. AI şəkliniz əsasında yeni məkan konsepti hazırlayır. Nəticə dəqiq ölçü planı deyil.",
   ],
   [
     "Şəkillərim məxfidirmi?",
@@ -9,11 +9,11 @@ export const faqs = [
   ],
   [
     "Şəkildəki mebeli satın ala bilərəm?",
-    "Kataloqda üslub, büdcə və mövcud ölçülərə görə oxşar məhsullar tövsiyə edilir. Generasiya edilmiş mebelin eyni satış məhsulu olduğunu iddia etmirik.",
+    "AI nəticəsində mebelin üzərinə gəlin və ya toxunun. Uyğun kateqoriya, üslub və büdcəyə görə oxşar kataloq məhsulları, qiymət və satıcı göstərilir. Seçiminizi səbətə əlavə edə bilərsiniz; oxşar məhsul şəkildəki mebelin özü olmaya bilər.",
   ],
   [
     "Ödəniş necə edilir?",
-    "Hazırda mebel üçün satıcıya sifariş sorğusu göndərilir. Platforma kartdan ödəniş tutmur. Plan ödənişləri administrator tərəfindən real ödəniş yoxlanıldıqdan sonra əl ilə təsdiqlənir.",
+    "Səbətdə seçdiyiniz mebellər üçün satıcıya sifariş sorğusu göndərirsiniz. Satıcı stok, çatdırılma və ödəniş detallarını sizinlə razılaşdırır. Hazırda platformada onlayn kart ödənişi yoxdur.",
   ],
   [
     "Generasiya alınmasa, kredit itirəmmi?",

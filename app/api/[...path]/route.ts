@@ -20,6 +20,7 @@ import * as v from "@/lib/validation";
 import { sendAuthMail, mailConfigured } from "@/lib/mail";
 import { storeImage, deleteObject, MAX_IMAGE_BYTES } from "@/lib/storage";
 import { enqueueGeneration } from "@/lib/generations";
+import { importDemoProject } from "@/lib/demo-project";
 import { requestOrder, updateOrder } from "@/lib/marketplace";
 import { adjustCredits } from "@/lib/credits";
 import { Prisma } from "@/generated/prisma/client";
@@ -414,6 +415,20 @@ async function perform(request: Request, path: string) {
         .object({ projectId: id, key: v.idempotency })
         .parse(b);
       return enqueueGeneration(u.id, projectId, key);
+    }
+    case "demo-project": {
+      const u = await requireUser();
+      const { sampleId, key } = z.object({ sampleId: z.enum(["home", "office", "studio"]), key: v.idempotency }).parse(b);
+      await rateLimit(`demo-project:${u.id}`, 10);
+      return importDemoProject(u.id, sampleId, key);
+    }
+    case "furniture-analysis": {
+      const u = await requireUser();
+      const { generationId } = z.object({ generationId: id }).parse(b);
+      const generation = await db.designGeneration.findFirst({ where: { id: generationId, project: { userId: u.id }, status: "SUCCEEDED", outputImageId: { not: null } } });
+      assert(generation, 404, "GENERATION", "Dizayn tapılmadı.");
+      const updated = await db.designGeneration.updateMany({ where: { id: generationId, analysisStatus: { in: ["NONE", "FAILED"] } }, data: { analysisStatus: "QUEUED", analysisError: null } });
+      return { queued: !!updated.count, status: updated.count ? "QUEUED" : generation.analysisStatus };
     }
     case "properties": {
       const u = await requireUser(["REALTOR"]);

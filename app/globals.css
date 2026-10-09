@@ -1185,3 +1185,90 @@ th {
 .dashboard details > p {
   margin-top: 18px;
 }
+
+/* Furniture discovery is a photo interaction, with keyboard/touch equivalents. */
+.shop-room { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 24px; align-items: start; margin: 24px 0; }
+.shop-room-main { min-width: 0; }
+.shop-room-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.room-view-switch { display: flex; background: var(--soft); padding: 4px; border-radius: 100px; gap: 4px; }
+.room-view-switch button { border: 0; background: transparent; color: var(--ink); padding: 10px 18px; border-radius: 100px; min-height: 44px; }
+.room-view-switch button[aria-pressed="true"] { background: var(--surface); box-shadow: 0 2px 8px #0000000d; }
+.room-photo { position: relative; overflow: hidden; border-radius: 20px; background: var(--soft); }
+.room-photo > img { display: block; width: 100%; height: auto; }
+.furniture-hotspot { position: absolute; border: 2px solid transparent; border-radius: 14px; background: transparent; padding: 0; cursor: pointer; }
+.furniture-hotspot:hover, .furniture-hotspot:focus-visible, .furniture-hotspot.selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.hotspot-pin { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: grid; place-items: center; width: 30px; height: 30px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 50%; font-size: 13px; font-weight: bold; box-shadow: 0 2px 12px #0002; }
+.furniture-hotspot.selected .hotspot-pin { background: var(--accent); color: white; }
+.room-hint { display: flex; gap: 8px; align-items: center; margin: 16px 0; font-size: 14px; }
+.room-hint svg { flex-shrink: 0; }
+.furniture-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.furniture-chips button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+.room-product-panel { position: sticky; top: 24px; padding: 24px; min-width: 0; }
+.room-product-panel h2 { font-size: 1.9rem; margin: 10px 0 14px; }
+.room-panel-empty { display: grid; gap: 20px; padding: 32px 0; }
+.room-panel-empty svg { color: var(--accent); }
+.room-match-note, .room-preview-note { font-size: 13px; }
+.room-match { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 12px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.room-match > img { width: 72px; height: 84px; border-radius: 8px; background: var(--soft); object-fit: contain; }
+.room-match h3 { font-size: 15px; line-height: 1.4; }
+.room-match .text-link { font-size: 13px; }
+.room-match .price { display: block; font-size: 19px; margin: 6px 0; }
+.room-match small { display: block; font-size: 12px; }
+.room-match > .btn, .room-match > .text-link, .room-match > p { grid-column: 1 / -1; }
+.room-product-panel > .btn { margin-top: 18px; width: 100%; }
+.demo-selection { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 40px; }
+.demo-choice { display: flex; gap: 16px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); text-align: left; color: var(--ink); min-width: 0; }
+.demo-choice.active { border: 2px solid var(--accent); padding: 9px; box-shadow: 0 4px 20px #0000000a; }
+.demo-choice img { width: 110px; height: 78px; border-radius: 10px; object-fit: cover; }
+.demo-choice strong, .demo-choice small { display: block; }
+.demo-choice strong { font-size: 19px; }
+.demo-result-heading { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+.demo-result-heading h2 { font-size: clamp(1.8rem, 3vw, 2.8rem); }
+.demo-result-heading p { margin-top: 10px; }
+.demo-next { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 40px; align-items: center; margin: 40px 0 20px; }
+.demo-next h2 { font-size: clamp(1.8rem, 3vw, 2.8rem); margin: 12px 0; }
+.demo-next p { max-width: 650px; }
+.demo-provenance { font-size: 13px; max-width: 900px; margin: 24px 0 70px; }
+.studio-steps { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+.studio-steps span { padding: 8px 14px; border-radius: 100px; background: var(--soft); font-size: 13px; }
+.studio-advanced { border-top: 1px solid var(--line); padding-top: 20px; margin-top: 20px; }
+.studio-advanced summary { cursor: pointer; margin-bottom: 16px; }
+@media (max-width: 1050px) { .shop-room { grid-template-columns: minmax(0, 1fr); } .room-product-panel { position: static; } .room-match { grid-template-columns: 90px minmax(0, 1fr); } .room-match > img { width: 90px; height: 90px; } }
+@media (max-width: 700px) { .demo-selection { gap: 8px; } .demo-choice { display: block; padding: 6px; } .demo-choice.active { padding: 5px; } .demo-choice img { width: 100%; height: 65px; } .demo-choice strong { font-size: 16px; } .demo-choice small { font-size: 11px; } .demo-choice span { display: block; padding: 8px 4px; } .demo-next { grid-template-columns: 1fr; gap: 24px; } .shop-room-toolbar .badge { font-size: 11px; } .room-product-panel { padding: 20px; } .room-view-switch button { padding: 8px 12px; } }
+@media (prefers-reduced-motion: reduce) { .shop-room *, .demo-selection * { transition: none; } }
+.startup-hero { gap: 48px; }
+.startup-hero h1 { font-size: clamp(3rem, 5vw, 5rem); }
+.startup-hero .hero-photo { height: 500px; }
+.startup-hero .floating-card { max-width: calc(100% - 16px); }
+.startup-hero .floating-card p { margin: 4px 0 0; font-size: 13px; }
+.audience-card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+.audience-card > img { display: block; width: 100%; height: auto; aspect-ratio: 3/2; object-fit: cover; }
+.audience-card > div { padding: 24px; }
+.audience-card h3 { font-size: 24px; margin: 12px 0; }
+.audience-card p { margin-bottom: 24px; }
+.audience-card:hover { box-shadow: 0 8px 30px #0000000d; }
+.startup-cta { background: var(--ink); padding: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: space-between; gap: 32px; color: var(--surface); }
+.startup-cta .eyebrow, .startup-cta p { color: var(--bg); }
+.startup-cta h2 { max-width: 650px; font-size: clamp(2rem, 3vw, 3.3rem); }
+.startup-cta p { margin-top: 18px; max-width: 600px; }
+.startup-cta .btn { flex-shrink: 0; }
+@media (max-width: 900px) { .startup-cta { padding: 32px; flex-direction: column; align-items: flex-start; } .startup-hero .hero-photo { height: auto; aspect-ratio: 3/2; } }
+@media (max-width: 700px) { .startup-hero .floating-card { left: 12px; bottom: 12px; padding: 12px; gap: 10px; } .startup-hero .floating-card h3 { font-size: 14px; } .startup-hero .floating-card p { font-size: 11px; } .startup-hero .hero-photo .photo-label { left: 12px; top: 12px; font-size: 10px; padding: 6px 10px; } .startup-hero h1 { font-size: clamp(2.8rem, 11vw, 4rem); } }
+/* Product cards open directly over the photographed furniture. */
+.shop-room { grid-template-columns: minmax(0, 1fr); }
+.furniture-hotspot .hotspot-pin { opacity: 0; }
+.furniture-hotspot:hover .hotspot-pin, .furniture-hotspot:focus-visible .hotspot-pin, .furniture-hotspot.selected .hotspot-pin { opacity: 1; }
+.room-hover-card { position: absolute; z-index: 150; border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: var(--surface); box-shadow: 0 12px 40px #0003; overflow: auto; text-align: left; }
+.room-hover-header { display: flex; justify-content: space-between; gap: 8px; align-items: center; margin-bottom: 12px; }
+.room-hover-header strong, .room-hover-header small { display: block; }
+.room-hover-header small { font-size: 11px; }
+.room-hover-header .icon-btn { width: 44px; height: 44px; flex-shrink: 0; }
+.room-hover-product { display: grid; gap: 8px; padding: 10px 0 14px; border-top: 1px solid var(--line); }
+.room-hover-product-info { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 10px; align-items: center; }
+.room-hover-product-info img { width: 58px; height: 58px; object-fit: contain; background: var(--soft); border-radius: 8px; }
+.room-hover-product h3 { font-size: 14px; line-height: 1.4; }
+.room-hover-product .price { font-size: 20px; line-height: 1.5; }
+.room-hover-product .text-link { font-size: 12px; gap: 5px; }
+.room-hover-product small { font-size: 12px; }
+.room-hover-product .btn { width: 100%; min-height: 44px; }
+.room-hover-empty { font-size: 13px; }

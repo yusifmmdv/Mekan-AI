@@ -1,5 +1,6 @@
 import { assert } from "./errors";
 import { localAiUrlValid } from "./config";
+import { HuggingFaceImageProvider } from "./huggingface";
 export interface ImageProvider {
   edit(
     image: Buffer,
@@ -121,6 +122,10 @@ export function getImageProvider(
   providerName = process.env.AI_PROVIDER,
   model?: string,
 ): ImageProvider {
+  if (providerName === "huggingface") {
+    assert(process.env.HF_TOKEN, 503, "HF_TOKEN", "Pulsuz AI üçün serverdə HF_TOKEN əlavə edilməlidir.");
+    return new HuggingFaceImageProvider();
+  }
   if (providerName === "local") {
     assert(
       localAiUrlValid() && !!process.env.LOCAL_AI_TOKEN,

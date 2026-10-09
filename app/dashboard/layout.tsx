@@ -27,7 +27,7 @@ export default async function DashboardLayout({
   const items = [
     ["/dashboard", "İcmal", LayoutDashboard],
     ["/dashboard/projects", "Dizayn layihələri", Sparkles],
-    ["/room-editor", "Otaq redaktoru", Palette],
+    ["/examples", "Hazır AI nümunələri", Palette],
     ["/dashboard/favorites", "Seçilmişlər", Heart],
     ["/dashboard/orders", "Sifariş və sorğular", ShoppingBag],
     ["/dashboard/credits", "Kreditlər və planlar", Coins],

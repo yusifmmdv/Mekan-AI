@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { processNext } from "../lib/generations";
+import { processNextAnalysis } from "../lib/furniture-analysis";
 import { db } from "../lib/db";
 let stopping = false;
 process.on("SIGINT", () => {
@@ -13,7 +14,8 @@ async function main() {
   while (!stopping) {
     try {
       const worked = await processNext();
-      if (!worked) await new Promise((r) => setTimeout(r, 2000));
+      const analyzed = await processNextAnalysis();
+      if (!worked && !analyzed) await new Promise((r) => setTimeout(r, 2000));
     } catch (e) {
       console.error(
         JSON.stringify({

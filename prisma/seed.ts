@@ -1,6 +1,8 @@
 import "dotenv/config";
 import { db } from "../lib/db";
 import { hashPassword } from "../lib/auth";
+import { importDemoProject } from "../lib/demo-project";
+import { demoSamples } from "../lib/demo-samples";
 async function main() {
   if (process.env.NODE_ENV === "production")
     throw new Error("Demo seed is forbidden in production.");
@@ -240,6 +242,8 @@ async function main() {
     create: { key: "commissionRate", value: 0 },
     update: {},
   });
+  const customer = await db.user.findUniqueOrThrow({ where: { email: "customer@demo.mekan.test" } });
+  for (const sample of demoSamples) await importDemoProject(customer.id, sample.id, `prepared_demo_${sample.id}_v1`);
   console.log(
     "Demo seed completed. Accounts: <role>@demo.mekan.test. Password: your SEED_DEMO_PASSWORD.",
   );

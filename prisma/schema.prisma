@@ -300,6 +300,10 @@ model DesignProject {
  @@index([userId,createdAt])
 }
 model DesignGeneration {
+ analysisStatus String @default("NONE")
+ analysisError String?
+ analysisLockedAt DateTime?
+ analysis Json?
  id String @id @default(cuid())
  projectId String
  status JobStatus @default(QUEUED)

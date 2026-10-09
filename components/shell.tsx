@@ -14,10 +14,9 @@ export async function Header() {
         </Link>
         <nav className="nav" aria-label="Əsas naviqasiya">
           <Link href="/studio">AI dizayn studiyası</Link>
-          <Link href="/room-editor">Otaq redaktoru</Link>
+          <Link href="/examples">Hazır nümunələr</Link>
           <Link href="/marketplace">Mebel kataloqu</Link>
           <Link href="/designers">Dizaynerlər</Link>
-          <Link href="/pricing">Planlar</Link>
         </nav>
         <div className="header-actions">
           <Link className="icon-btn" href="/cart" aria-label="Səbət">
@@ -34,11 +33,10 @@ export async function Header() {
       </header>
       <nav className="mobile-nav" aria-label="Mobil naviqasiya">
         <Link href="/studio">AI studiya</Link>
-        <Link href="/room-editor">2D redaktor</Link>
+        <Link href="/examples">Nümunələr</Link>
         <Link href="/marketplace">Mebel</Link>
         <Link href="/stores">Mağazalar</Link>
         <Link href="/designers">Dizaynerlər</Link>
-        <Link href="/pricing">Planlar</Link>
       </nav>
     </div>
   );
@@ -68,8 +66,7 @@ export function Footer() {
             <h3>Platforma</h3>
             <Link href="/how-it-works">Necə işləyir</Link>
             <Link href="/realtors">Əmlak agentləri üçün</Link>
-            <Link href="/pricing">Planlar</Link>
-            <Link href="/about">Haqqımızda</Link>
+              <Link href="/about">Haqqımızda</Link>
           </div>
           <div>
             <h3>Dəstək</h3>

@@ -1,87 +1,96 @@
 # Mekan AI
 
-Azerbaijani furniture marketplace and room design application built with Next.js App Router, strict TypeScript, PostgreSQL/Prisma, private image storage and local Stable Diffusion image editing and an optional, explicitly enabled OpenAI provider. The brand is configurable with `NEXT_PUBLIC_BRAND_NAME`. Catalog fixtures and prices are labeled demo/sample; no payments, AI outputs, partnerships or analytics are simulated.
+**Boş otaqdan dizayna, dizayndan sifarişə.** Azərbaycan dilində ev, ofis və yaradıcı studiyalar üçün AI interyer dizaynı və mebel kəşfi startup prototipi.
 
-## Local setup
+![Mekan AI — hazır ev dizaynı](public/demo/home.png)
 
-Requires Node.js 24+, npm and Docker Compose (or an existing PostgreSQL server).
+İstifadəçi otaq şəklini yükləyir, üslub və büdcə seçir, AI dizaynı yaradır. Nəticədə mebelin üzərinə gələndə **şəklin üzərində** oxşar kataloq məhsulu, AZN qiyməti və satıcı kartı açılır. Məhsul səbətə əlavə edilir, mağazaya sifariş sorğusu və dizaynerə layihə brifi göndərilir.
+
+## Ən sürətli baxış — AI tokeni və baza olmadan
+
+Node.js 24+ tələb olunur.
 
 ```sh
 npm ci
 cp .env.example .env
-docker compose up -d
 npm run db:generate
-npm run db:migrate
-npm run db:seed
 npm run dev
 ```
 
-Before seeding, set `SEED_DEMO_PASSWORD` to your own password of at least 12 characters. Seed refuses production environments. Demo accounts are `customer@demo.mekan.test`, `realtor@demo.mekan.test`, `store_owner@demo.mekan.test`, `designer@demo.mekan.test`, and `admin@demo.mekan.test`. New registrations start with **zero** credits. An admin can approve businesses/products, adjust credits and confirm manual payment records. Demo seed is repeatable but does not overwrite existing accounts.
+`http://localhost:3000` — startup əsas səhifəsi; `http://localhost:3000/examples` — ev/ofis/studiya nümunələri və şəkildə hover kartları. Yeni brauzer sessiyasında bu iki səhifə PostgreSQL və HF tokeni olmadan açılır. Səbət, şəxsi layihə, sifariş və dizayner müraciəti üçün aşağıdakı tam quraşdırmanı edin.
 
-Use the exact origin in `APP_URL` when opening the browser; write requests enforce origin checks. Default example: http://localhost:3000. Run the application and the generation worker as separate processes:
+Hazır nümunələr əvvəlcədən AI ilə yaradılıb; canlı generasiya nəticəsi kimi göstərilmir. Məhsul, qiymət və satıcı nümunələri demo kimi işarələnir. Nümunə mebel sahələri əl ilə yoxlanıb; canlı nəticələrdə avtomatik detector işləyir. [Nümunələrin mənbəyi və promptları](docs/DEMO_ASSETS.md).
+
+## Tam demo — baza, səbət, sifariş və dizayner
+
+Docker Desktop işlək olmalıdır. Əvvəl yuxarıdakı `npm ci` addımını yerinə yetirin.
 
 ```sh
+npm run demo:setup
+npm run demo
+```
+
+`demo:setup` çatışmayan `.env` faylını yaradır, mövcud bazanı istifadə edir və ya yalnız PostgreSQL konteynerini başladır, əlavəedici miqrasiyaları tətbiq edir və nümunə kataloq, dizayner və üç hazır layihə yaradır. Baza artıq qurulubsa: `npm run demo:setup -- --existing-db`.
+
+`demo` worker və tətbiqi başladır, Chrome/Playwright brauzerində demo müştəri hesabı ilə nümunələri və studiyanı açır. Chrome yoxdursa əvvəl `npx playwright install chromium` işlədin. Demo şifrəsi `.env` daxilində `SEED_DEMO_PASSWORD` sətrindədir; ən azı 12 simvol tələb olunur. Boş şifrə setup zamanı avtomatik yaradılır. Demo hesabları:
+
+- `customer@demo.mekan.test` — layihə, səbət və sifariş.
+- `store_owner@demo.mekan.test` — mağazaya daxil olan sifariş və sorğular.
+- `designer@demo.mekan.test` — layihə ilə dizayner müraciətləri.
+- `admin@demo.mekan.test` — moderasiya və idarəetmə.
+
+Nümunədə **“Layihəni aç və seç”** və ya **“Nümunəni layihə kimi aç”** seçin. Şəxsi layihədə hover kartından mebeli səbətə əlavə edin və sifariş sorğusu göndərin. Həmin səhifədə “Bu dizaynı kim həyata keçirə bilər?” bölməsindən dizaynerə müraciət edin. Ödəniş gateway-i yoxdur; sifariş və müraciətlər real PostgreSQL qeydləridir.
+
+## Canlı pulsuz AI
+
+[Pulsuz Hugging Face hesabı](https://huggingface.co/join) və [access token](https://huggingface.co/settings/tokens) yaradın. Tokeni yalnız `.env` faylında saxlayın:
+
+```dotenv
+AI_PROVIDER=huggingface
+HF_TOKEN=your_hugging_face_token
+ALLOW_PAID_AI=false
+PAID_AI_ENABLED=false
+```
+
+Rəsmi [Qwen Image Edit Space-i](https://huggingface.co/spaces/Qwen/Qwen-Image-Edit) şəkil + prompt ilə çağırılır. Billed Inference Providers API-si və ödənişli alternativ istifadə edilmir. [Pulsuz ZeroGPU istifadəsində kvota və növbə məhdudiyyətləri var](https://huggingface.co/docs/hub/spaces-zerogpu); servis işləməsə xəta göstərilir, hazır nümunə yeni nəticə kimi əvəz edilmir. Real ev/ofis/studiya şəkillərində keyfiyyət ayrıca yoxlanmalıdır. Tətbiq və worker tokeni əlavə etdikdən sonra yenidən başladılmalıdır:
+
+```sh
+npm run dev
+# Ayrı terminalda:
 npm run worker
 ```
 
-Local AI installation downloads public model weights once; generation runs on your own hardware. Room photos use private local disk by default. To use MinIO, change `STORAGE_DRIVER=s3`; Compose provisions a private bucket. The application streams authorized images through `/api/images/:id`. S3 credentials remain server-side. Product, logo and portfolio images attached to approved public records are public through that controlled route; room images stay private.
+Brauzer ünvanı `.env` daxilində `APP_URL` ilə eyni origin olmalıdır. İlk setup nümunələrdə `http://localhost:3000` istifadə edir. Şəkillər xarici Qwen xidmətinə göndərilir; şəxsi yaddaş və tətbiqdə giriş icazələri qorunur.
 
-## Configuration
+### Canlı nəticədə avtomatik mebel aşkarlama
 
-See [.env.example](.env.example) for all environment variable names.
+Python 3.11+ üçün virtual mühit və pulsuz açıq Grounding DINO modelini hazırlayın. Mac/Linux:
 
-| Variables                                                           | Purpose                                                                       |
-| ------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `DATABASE_URL`                                                      | PostgreSQL connection for app, migrations and worker                          |
-| `APP_URL`                                                           | Canonical browser origin and email link base                                  |
-| `NEXT_PUBLIC_BRAND_NAME`                                            | Public brand text                                                             |
-| `STORAGE_DRIVER`, `STORAGE_PATH`                                    | `local` private disk directory or `s3`                                        |
-| `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`                             | S3-compatible endpoint and private bucket                                     |
-| `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`                          | Server-only storage credentials                                               |
-| `AI_PROVIDER`, `OPENAI_API_KEY`, `OPENAI_IMAGE_MODEL`               | Use `openai` and a configured image editing model; server-only key            |
-| `AI_COST_ESTIMATE_AZN`                                              | Optional administrator estimate per generation; not verified provider billing |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` | Transactional email transport                                                 |
-| `REQUIRE_EMAIL_VERIFICATION`                                        | Require configured mail and verified emails when `true`                       |
-| `SEED_DEMO_PASSWORD`                                                | Local demo account password; never ship to production                         |
+```sh
+python3 -m venv .local-ai/venv
+.local-ai/venv/bin/python -m pip install -r local_ai/detection-requirements.txt
+npm run ai:detect:prepare
+```
 
-The default local AI provider requires no paid API key and consumes zero platform credits. See [local AI setup](docs/LOCAL_AI.md). OpenAI is blocked unless `ALLOW_PAID_AI=true` is explicitly configured, with a valid key. Without a running/configured model service, generation fails honestly. Without SMTP, reset requests return an explicit configuration error. Email verification can be required when SMTP is available. There is no payment gateway: billing creates pending requests and admin records an externally verified manual payment reference. Do not confirm payment records without confirming receipt externally.
+Windows-da virtual mühitin Python yolu `.local-ai/venv/Scripts/python.exe` olur; pip əmrində həmin yolu istifadə edin. Worker bu yolu avtomatik seçir, yaxud `DETECTOR_PYTHON` ilə təyin etmək olar.
 
-## Verification
+Şəkil generasiyası tamamlananda dərhal saxlanılır. Worker ayrıca mebeli aşkarlayır, koordinatları və oxşar aktiv kataloq məhsullarını bazada saxlayır. Analiz alınmasa şəkil itmir; “Mebelləri analiz et” ilə yenidən cəhd etmək olur. Detector model çəkiləri əvvəlcədən endirilir; şəkil analizi lokal aparılır.
+
+## Texnologiya və yoxlama
+
+Next.js 16 / React 19, TypeScript, PostgreSQL / Prisma, məxfi lokal və ya S3 şəkil yaddaşı, davamlı generasiya və analiz növbəsi. 2D redaktor MVP-dən çıxarılıb; köhnə saxlanmış məlumatlar silinmir.
 
 ```sh
 npm run lint
 npm run typecheck
 npm test
-npm run test:integration
-npx playwright install chromium
-npm run test:e2e
 npm run build
+npm run test:public
+# Qurulmuş development/test bazası ilə, worker-i dayandırdıqdan sonra:
+npm run test:integration
+npm run test:e2e
 ```
 
-Unit tests validate permissions, password hashing, uploads, schemas and recommendation constraints. Integration tests require the migrated database in `.env`, create unique isolated fixtures and delete only those fixtures. They test real credit concurrency, idempotency, generation failure/refund and order ownership/stock transactions. Stop the worker before integration tests; the mocked worker test refuses unrelated queued jobs. Tests never call a paid provider.
+[Hakaton ssenarisi](docs/HACKATHON.md) · [Cari yoxlama vəziyyəti](docs/AI_DEMO_VERIFICATION.md) · [Arxitektura](docs/ARCHITECTURE.md).
 
-Playwright exercises registration/login, catalog/cart, admin/store permissions, origin checks and private uploads/project access using a running local app. It also verifies isolated TEST manual billing confirmation/replay and audit logs, realtor staging ownership, and designer service requests/completion. Test billing references explicitly say TEST_NO_REAL_PAYMENT; no real payment is represented. It creates and removes a unique test customer. E2E assumes default local disk and email verification disabled. Run against a development/test environment only.
-
-## Production deployment
-
-No deployment is performed by this repository setup. Provision PostgreSQL, a private S3 bucket and optional SMTP/OpenAI credentials yourself. Use separate least-privilege credentials and TLS, set the canonical HTTPS `APP_URL`, and apply migrations with `npm run db:migrate`. Build with `npm run build`; start with `npm start` behind a reverse proxy. A supplied Dockerfile binds to all container interfaces. Run `npm run worker` as a supervised separate service using the same environment and storage. Avoid multiple processes on non-shared local disk: use S3 in production. Back up PostgreSQL and object storage, monitor worker failures and review logs. Never run demo seed in production. Docker Compose defaults are local development credentials and loopback ports.
-
-Use the lockfile with `npm ci`. The Docker build has not necessarily been executed; the QA report distinguishes verified commands from supplied deployment assets.
-
-## Scope and limitations
-
-The application implements role dashboards, moderated catalog, favorites, comparison, cart/order requests, inquiries, design projects, realtor properties/staging, designer services/requests, configurable sample plans, credit ledger/manual billing, administrative controls and recorded events. Detailed implementation status is in [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md) and architecture in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-
-Virtual staging disclosures are also baked into downloaded result images. Room edits attempt to preserve architecture but cannot guarantee exact geometry. Catalog recommendations are deterministic visually/style-similar suggestions; they do not prove that generated furniture is a catalog item. Exact 3D placement is unavailable. Price/dimension filters do not solve a complete room layout or guarantee fit. Actual provider costs are not calculated from usage. Online checkout, OAuth, live chat, multilingual translations, automated marketplace payouts and production operations remain future work. Azerbaijani is implemented; locale fields and centralized labels support later English/Russian work.
-
-## Provider reference
-
-The configurable image-edit adapter follows the [official OpenAI image-edit API](https://developers.openai.com/api/reference/resources/images/methods/edit). Paid API model access and live OpenAI generation remain untested without credentials. Local model verification is recorded separately in `docs/LOCAL_AI.md`.
-
-## Interactive 2D room editor
-
-Open `/room-editor` after login. Upload a room photograph, add furniture from the marketplace or the original CC0 demo asset catalog, and save your design. Existing AI projects also link to the editor. This uses Konva and private PostgreSQL documents; no AI generation, API key or payment is required. See [docs/ROOM_EDITOR.md](docs/ROOM_EDITOR.md).
-
-## Whole-space redesign to implementation
-
-The studio accepts one primary room view and up to five supporting photos for homes, offices and studios. Wall, flooring, lighting and custom furniture requirements form a saved brief. Project-linked requests deliver this brief to approved stores and available designer services through existing dashboards. Only explicitly selected recipients gain access to the project images. Local AI currently renders the primary view; supporting photos are context rather than multi-view reconstruction. See [docs/REDESIGN.md](docs/REDESIGN.md).
+GitHub Actions lokal unit/integration/brauzer axınlarını yoxlayır; canlı xarici AI çağırışı etmir. Heç bir API açarı, `.env`, şəxsi şəkil, model çəkisi və lokal baza repoya daxil edilmir.

@@ -1,0 +1,47 @@
+name: Verify Mekan AI
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: mekan
+          POSTGRES_PASSWORD: ci_test_only
+          POSTGRES_DB: mekan
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://mekan:ci_test_only@localhost:5432/mekan?schema=public
+      APP_URL: http://127.0.0.1:3000
+      AI_PROVIDER: huggingface
+      HF_TOKEN: ''
+      ALLOW_PAID_AI: 'false'
+      PAID_AI_ENABLED: 'false'
+      STORAGE_DRIVER: local
+      STORAGE_PATH: .storage
+      REQUIRE_EMAIL_VERIFICATION: 'false'
+      SEED_DEMO_PASSWORD: CI_Test_Only_Demo_Password_2026
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run db:generate
+      - run: npm run db:migrate
+      - run: npm run db:seed
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run test:integration
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - run: npm run build
+      - run: npm run test:public

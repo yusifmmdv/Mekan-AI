@@ -531,7 +531,7 @@ export function GenerationControl({
         }}
       >
         Dizayn yarat ·{" "}
-        {creditCost === 0 ? "Pulsuz lokal AI" : `${creditCost} kredit`}
+        {creditCost === 0 ? "Pulsuz AI" : `${creditCost} kredit`}
       </button>
       {error && (
         <p className="error" role="alert">

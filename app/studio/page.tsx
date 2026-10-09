@@ -24,9 +24,7 @@ export default async function Studio() {
       </div>
       {!aiConfigured() && (
         <div className="notice">
-          AI provayderi konfiqurasiya edilməyib. Layihə yarada və saxlaya
-          bilərsiniz; dizayn generasiyası üçün lokal AI xidməti konfiqurasiya
-          edilməlidir.
+          Canlı AI dizaynı hazırda aktiv deyil. Layihənizi saxlaya və hazır nümunələri kəşf edə bilərsiniz.
         </div>
       )}
       {process.env.AI_PROVIDER === "local" && (
@@ -36,19 +34,14 @@ export default async function Studio() {
           keyfiyyəti və ölçü dəqiqliyi məhduddur.
         </div>
       )}
-      <div className="notice">
-        Mebeli özünüz yerləşdirmək istəyirsiniz?{" "}
-        <Link href="/room-editor" className="text-link">
-          Pulsuz interaktiv 2D redaktoru açın
-        </Link>
-        . AI generasiyası tələb olunmur.
-      </div>
+      {process.env.AI_PROVIDER === "huggingface" && aiConfigured() && <div className="notice">Şəkliniz dizayn yaratmaq üçün xarici AI xidmətinə göndərilir. Pulsuz xidmətdə növbə və gündəlik limit ola bilər.</div>}
+      <div className="notice">Şəklinizi yükləyin və ya <Link href="/examples" className="text-link">hazır AI nümunələrini açın</Link>. Şəkildəki mebellərdən oxşar məhsulları seçib sifariş sorğusu göndərin.</div>
       {u ? (
         <div className="grid-2 section" style={{ paddingTop: 0 }}>
           <div className="panel">
             <StudioForm
               properties={properties}
-              autoGenerate={process.env.AI_PROVIDER === "local" && aiConfigured()}
+              autoGenerate={aiConfigured()}
             />
           </div>
           <aside>

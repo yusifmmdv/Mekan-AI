@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && next build --webpack",
     "start": "next start --hostname 127.0.0.1",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -17,7 +17,10 @@
     "worker": "tsx scripts/worker.ts",
     "ai:local": ".local-ai/venv/bin/python local_ai/server.py",
     "ai:prepare": ".local-ai/venv/bin/python local_ai/prepare.py",
-    "demo": "node scripts/demo.mjs"
+    "demo": "node scripts/demo.mjs",
+    "demo:setup": "node scripts/demo-setup.mjs",
+    "ai:detect:prepare": "node scripts/prepare-detector.mjs",
+    "test:public": "node scripts/verify-public.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "latest",

@@ -55,8 +55,9 @@ export function localAiUrlValid(value = process.env.LOCAL_AI_URL): boolean {
     return false;
   }
 }
+export const freeAi = () => ["local", "huggingface"].includes(process.env.AI_PROVIDER || "");
 export const aiConfigured = () =>
-  process.env.AI_PROVIDER === "local"
+  process.env.AI_PROVIDER === "huggingface" ? !!process.env.HF_TOKEN : process.env.AI_PROVIDER === "local"
     ? localAiUrlValid() && !!process.env.LOCAL_AI_TOKEN
     : process.env.AI_PROVIDER === "openai" &&
       process.env.PAID_AI_ENABLED === "true" &&

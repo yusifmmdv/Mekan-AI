@@ -2,12 +2,15 @@
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { pageUser } from "@/lib/auth";
-import { money, roomLabels, styleLabels, aiConfigured } from "@/lib/config";
+import { money, roomLabels, styleLabels, aiConfigured, freeAi } from "@/lib/config";
 import { Comparison, GenerationControl } from "@/components/actions";
 import { recommendProducts } from "@/lib/recommendations";
 import { ProductCard, productInclude } from "@/components/catalog";
 import Link from "next/link";
 import { ProjectHandoff } from "@/components/project-handoff";
+import { ShoppableRoom, FurnitureAnalysisControl } from "@/components/shoppable-room";
+import { parseFurniture } from "@/lib/furniture";
+import { imageUrl } from "@/components/catalog";
 export default async function Project({
   params,
 }: {
@@ -63,35 +66,25 @@ export default async function Project({
             </span>
           )}
         </div>
-        <span className="badge">{u.wallet?.balance || 0} kredit</span>
+        <span className="badge">{freeAi() ? "AI məkan layihəsi" : `${u.wallet?.balance || 0} kredit`}</span>
       </div>
       {!aiConfigured() && (
         <div className="notice">
           AI xidməti konfiqurasiya edilməyib. Şəkliniz və layihəniz saxlanılıb.
-          Lokal AI xidmətini işə salın; ödənişli API tələb olunmur.
+          Pulsuz AI xidmətini konfiqurasiya edin və ya hazır nümunələri açın.
         </div>
       )}
-      <div className="actions" style={{ marginBottom: 22 }}>
-        <Link
-          href={`/room-editor?imageId=${p.imageId}`}
-          className="btn secondary"
-        >
-          Otaqda mebel yerləşdir · 2D redaktor
-        </Link>
-        {result?.outputImageId && (
-          <Link
-            href={`/room-editor?imageId=${result.outputImageId}`}
-            className="text-link"
-          >
-            AI nəticəsinə 2D qatlar əlavə et
-          </Link>
-        )}
-      </div>
       {result?.outputImageId ? (
-        <Comparison
+        <>
+        <ShoppableRoom
           before={`/api/images/${p.imageId}`}
           after={`/api/images/${result.outputImageId}`}
+          objects={parseFurniture(result.analysis)}
+          products={candidates.map(product => ({ id: product.id, slug: product.slug, name: product.name, price: Number(product.discountPrice ?? product.price), stock: product.stock, demo: product.demo, image: imageUrl(product), store: { name: product.store.name, slug: product.store.slug } }))}
         />
+        <FurnitureAnalysisControl generationId={result.id} status={result.analysisStatus} error={result.analysisError} />
+        <details className="panel" style={{ marginTop: 20 }}><summary>Əvvəl / sonra müqayisəsi</summary><Comparison before={`/api/images/${p.imageId}`} after={`/api/images/${result.outputImageId}`} /></details>
+        </>
       ) : (
         <div className="panel">
           <img
@@ -110,7 +103,7 @@ export default async function Project({
           zəmanəti verilmir.
         </p>
         <GenerationControl
-          creditCost={process.env.AI_PROVIDER === "local" ? 0 : 1}
+          creditCost={freeAi() ? 0 : 1}
           projectId={p.id}
           initial={p.generations.map((g) => ({
             id: g.id,

@@ -1,0 +1,81 @@
+import { test, expect } from "@playwright/test";
+import { randomUUID } from "node:crypto";
+import { Pool } from "pg";
+import { unlink } from "node:fs/promises";
+import path from "node:path";
+const origin = new URL(process.env.APP_URL || "http://127.0.0.1:3000").origin;
+const run = `ai_demo_${randomUUID()}`;
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const emails: string[] = [];
+test.afterAll(async () => {
+  for (const email of emails) {
+    const { rows: users } = await pool.query('SELECT id FROM "User" WHERE email=$1', [email]);
+    const user = users[0]; if (!user) continue;
+    const { rows: assets } = await pool.query('SELECT key FROM "ImageAsset" WHERE "ownerId"=$1', [user.id]);
+    const { rows: orders } = await pool.query('SELECT id,status FROM "Order" WHERE "userId"=$1', [user.id]);
+    for (const order of orders) {
+      if (order.status === "COMPLETED") await pool.query('UPDATE "Product" p SET stock=p.stock+i.quantity FROM "OrderItem" i WHERE i."orderId"=$1 AND i."productId"=p.id', [order.id]);
+      await pool.query('DELETE FROM "Notification" WHERE body LIKE $1', [`%${order.id}%`]);
+      await pool.query(`DELETE FROM "AnalyticsEvent" WHERE metadata->>'orderId'=$1`, [order.id]);
+    }
+    await pool.query('DELETE FROM "Order" WHERE "userId"=$1', [user.id]);
+    await pool.query('DELETE FROM "DesignerRequest" WHERE "userId"=$1', [user.id]);
+    await pool.query('DELETE FROM "Inquiry" WHERE "userId"=$1', [user.id]);
+    await pool.query('DELETE FROM "DesignProject" WHERE "userId"=$1', [user.id]);
+    await pool.query('DELETE FROM "ImageAsset" WHERE "ownerId"=$1', [user.id]);
+    for (const asset of assets) await unlink(path.resolve(process.env.STORAGE_PATH || ".storage", asset.key)).catch(() => {});
+    await pool.query('DELETE FROM "CreditWallet" WHERE "userId"=$1', [user.id]);
+    await pool.query('DELETE FROM "User" WHERE id=$1', [user.id]);
+  }
+  await pool.query('DELETE FROM "Notification" WHERE body LIKE $1', [`%${run}%`]);
+  await pool.end();
+});
+test("startup examples expose product cards directly over the photo on hover, keyboard and touch", async ({ page, browser }) => {
+  const externalGenerations: string[] = [];
+  page.on("request", request => { if (/hf\.space|api\.openai\.com|\/api\/generations/.test(request.url())) externalGenerations.push(request.url()); });
+  await page.goto("/"); await expect(page.getByRole("heading", { name: /Boş otaqdan/ })).toBeVisible();
+  await page.goto("/examples");
+  const sofa = page.getByRole("button", { name: /^Divan 1:/ }); await sofa.hover();
+  const card = page.getByRole("dialog", { name: "Divan üçün məhsullar" }); await expect(card).toBeVisible();
+  await expect(card.getByText("Luna modul divan")).toBeVisible();
+  await expect(card.getByText("Forma Studio · Demo", { exact: true })).toBeVisible();
+  const photoBounds = (await page.getByTestId("shoppable-room-photo").boundingBox())!;
+  const cardBounds = (await card.boundingBox())!;
+  expect(cardBounds.x).toBeGreaterThanOrEqual(photoBounds.x); expect(cardBounds.y).toBeGreaterThanOrEqual(photoBounds.y);
+  expect(cardBounds.x + cardBounds.width).toBeLessThanOrEqual(photoBounds.x + photoBounds.width + 1);
+  expect(cardBounds.y + cardBounds.height).toBeLessThanOrEqual(photoBounds.y + photoBounds.height + 1);
+  await card.getByRole("button", { name: "Mebel kartını bağla" }).click(); await expect(card).not.toBeVisible();
+  await sofa.focus(); await expect(card).toBeVisible(); await page.keyboard.press("Escape"); await expect(card).not.toBeVisible();
+  await page.getByRole("button", { name: /^Ofis Modern/ }).click(); await expect(page.getByRole("heading", { name: "Fokus üçün modern ofis" })).toBeVisible();
+  await page.getByRole("button", { name: /^Studiya Contemporary/ }).click(); await expect(page.getByRole("heading", { name: "Yaradıcı dizayn studiyası" })).toBeVisible();
+  await page.getByRole("button", { name: "Boş otaq", exact: true }).click(); await expect(page.locator(".furniture-hotspot")).toHaveCount(0);
+  const mobile = await browser.newContext({ viewport: { width: 375, height: 812 }, hasTouch: true, isMobile: true, reducedMotion: "reduce" });
+  const mobilePage = await mobile.newPage(); await mobilePage.goto(`${origin}/examples?space=studio`);
+  await mobilePage.getByRole("button", { name: /^Divan 4:/ }).tap(); await expect(mobilePage.getByRole("dialog")).toBeVisible();
+  expect(await mobilePage.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await mobilePage.screenshot({ path: "test-results/startup-mobile.png", fullPage: true }); await mobile.close();
+  expect(externalGenerations).toEqual([]);
+});
+test("saved example remains private and supports photo-to-cart, order request and designer handoff without a paid API", async ({ page, browser }) => {
+  const email = `${run}@example.test`; emails.push(email);
+  expect((await page.request.post("/api/auth/register", { headers: { origin }, data: { name: "AI Demo QA", email, password: `QA_${randomUUID()}!`, role: "CUSTOMER" } })).status()).toBe(200);
+  await page.goto("/examples"); await page.getByRole("button", { name: "Nümunəni layihə kimi aç" }).click();
+  await expect(page).toHaveURL(/\/dashboard\/projects\//);
+  const projectId = new URL(page.url()).pathname.split("/").at(-1)!;
+  const { rows: generations } = await pool.query('SELECT g.* FROM "DesignGeneration" g WHERE g."projectId"=$1', [projectId]);
+  const g = generations[0]; expect(g.provider).toBe("demo"); expect(g.credits).toBe(0); expect(g.metadata.preparedDemo).toBe(true); expect(g.analysisStatus).toBe("SUCCEEDED");
+  await page.getByRole("button", { name: /^Divan 1:/ }).hover();
+  const card = page.getByRole("dialog", { name: "Divan üçün məhsullar" }); await card.getByRole("button", { name: "Səbətə əlavə et" }).first().click();
+  await expect(page.getByText("Məhsul səbətə əlavə olundu.", { exact: true })).toBeVisible();
+  await page.goto("/cart"); await page.getByLabel("Telefon və ya əlaqə məlumatı").fill(`${run}@example.test`); await page.getByRole("button", { name: "Mağazaya sorğu göndər" }).click(); await expect(page).toHaveURL(/\/dashboard\/orders/);
+  expect((await pool.query('SELECT count(*)::int AS count FROM "Order" o JOIN "User" u ON u.id=o."userId" WHERE u.email=$1', [email])).rows[0].count).toBeGreaterThan(0);
+  await page.goto(`/dashboard/projects/${projectId}`);
+  const designer = page.locator(".panel").filter({ has: page.getByRole("heading", { name: "Dizayner və icra xidmətləri" }) });
+  await designer.locator("summary").first().click(); await designer.getByLabel("Redizaynın həyata keçirilməsi üçün istəklər").first().fill(`${run} — bu otağın dizaynını həyata keçirmək istəyirəm.`); await designer.getByLabel("Telefon və ya e-poçt").first().fill(email);
+  await designer.getByRole("button", { name: "Layihəni dizaynerə göndər" }).first().click(); await expect(page.getByText("Məlumat yadda saxlanıldı.", { exact: true })).toBeVisible();
+  expect((await pool.query('SELECT count(*)::int AS count FROM "DesignerRequest" WHERE "projectId"=$1', [projectId])).rows[0].count).toBe(1);
+  const outsider = await browser.newContext();
+  expect((await outsider.request.get(`${origin}/api/images/${g.outputImageId}`)).status()).toBe(404);
+  expect((await outsider.request.post(`${origin}/api/furniture-analysis`, { headers: { origin }, data: { generationId: g.id } })).status()).toBe(401);
+  await outsider.close();
+});

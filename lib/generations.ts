@@ -1,7 +1,9 @@
 import { db } from "./db";
 import { assert } from "./errors";
 import { adjustCredits } from "./credits";
-import { aiConfigured } from "./config";
+import { aiConfigured, freeAi } from "./config";
+import { HF_MODEL } from "./huggingface";
+import { AppError } from "./errors";
 import { buildPrompt, getImageProvider, type ImageProvider } from "./ai";
 import { readAsset, storeImage } from "./storage";
 import { labelStagingImage } from "./staging";
@@ -16,7 +18,7 @@ export async function enqueueGeneration(
     "AI_NOT_CONFIGURED",
     "AI xidməti konfiqurasiya edilməyib. Layihəni saxlaya bilərsiniz; yerli AI xidmətini konfiqurasiya edin.",
   );
-  const local = process.env.AI_PROVIDER === "local";
+  const local = freeAi();
   return db.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT "id" FROM "CreditWallet" WHERE "userId"=${userId} FOR UPDATE`;
     const existing = await tx.designGeneration.findUnique({
@@ -50,9 +52,9 @@ export async function enqueueGeneration(
       data: {
         projectId,
         idempotencyKey: key,
-        provider: local ? "local" : "openai",
+        provider: process.env.AI_PROVIDER!,
         credits: local ? 0 : 1,
-        model: local
+        model: process.env.AI_PROVIDER === "huggingface" ? HF_MODEL : local
           ? process.env.LOCAL_AI_MODEL ||
             "stable-diffusion-v1-5/stable-diffusion-v1-5"
           : process.env.OPENAI_IMAGE_MODEL || "gpt-image-2",
@@ -153,8 +155,9 @@ export async function processNext(provider?: ImageProvider) {
         data: {
           status: "SUCCEEDED",
           outputImageId: asset.id,
+          analysisStatus: "QUEUED",
           metadata: JSON.parse(JSON.stringify(result.metadata)),
-          ...(g.provider === "local" ? { actualCostAzn: 0 } : {}),
+          ...(["local", "huggingface"].includes(g.provider) ? { actualCostAzn: 0 } : {}),
           lockedAt: null,
         },
       });
@@ -177,9 +180,9 @@ export async function processNext(provider?: ImageProvider) {
     );
     await failGeneration(
       g.id,
-      g.credits > 0
+      e instanceof AppError ? e.message : g.credits > 0
         ? "Generasiya alınmadı. Kredit geri qaytarıldı. Yenidən yoxlayın."
-        : "Yerli AI generasiyası alınmadı. Yenidən yoxlayın.",
+        : "AI generasiyası alınmadı. Yenidən yoxlayın və ya hazır nümunələri açın.",
     );
   }
   return true;
