@@ -1,0 +1,40 @@
+import {test,expect} from '@playwright/test';
+import {Pool} from 'pg';
+import sharp from 'sharp';
+import {randomUUID} from 'node:crypto';
+import {unlink} from 'node:fs/promises';
+import path from 'node:path';
+const pool=new Pool({connectionString:process.env.DATABASE_URL});
+const origin=new URL(process.env.APP_URL||'http://127.0.0.1:3000').origin;
+const run=`redesign_${randomUUID()}`;
+const emails:string[]=[];
+test.afterAll(async()=>{
+ const users=(await pool.query('SELECT id FROM "User" WHERE email=ANY($1)',[emails])).rows;
+ for(const {id} of users){const assets=(await pool.query('SELECT key FROM "ImageAsset" WHERE "ownerId"=$1',[id])).rows;await pool.query('DELETE FROM "Inquiry" WHERE "userId"=$1',[id]);await pool.query('DELETE FROM "DesignerRequest" WHERE "userId"=$1',[id]);await pool.query('DELETE FROM "DesignProject" WHERE "userId"=$1',[id]);await pool.query('DELETE FROM "ImageAsset" WHERE "ownerId"=$1',[id]);for(const a of assets)await unlink(path.resolve(process.env.STORAGE_PATH||'.storage',a.key)).catch(()=>{});await pool.query('DELETE FROM "CreditWallet" WHERE "userId"=$1',[id]);await pool.query('DELETE FROM "User" WHERE id=$1',[id]);}
+ await pool.query('DELETE FROM "Notification" WHERE body LIKE $1',[`%${run}%`]);await pool.end();
+});
+test('multi-view redesign shares private brief only with requested store and designer',async({page,browser})=>{
+ const customerEmail=`${run}@example.test`;emails.push(customerEmail);
+ expect((await page.request.post('/api/auth/register',{headers:{origin},data:{name:'Redesign QA',email:customerEmail,password:`QA_${randomUUID()}!`,role:'CUSTOMER'}})).status()).toBe(200);
+ const bytes=await sharp({create:{width:800,height:600,channels:3,background:'#cfc7af'}}).png().toBuffer();
+ const upload=async(request:typeof page.request)=>(await (await request.post('/api/uploads',{headers:{origin},multipart:{purpose:'ROOM',file:{name:'room.png',mimeType:'image/png',buffer:bytes}}})).json()).data.id;
+ const primary=await upload(page.request),extra=await upload(page.request);
+ const payload={title:run,imageId:primary,galleryIds:[extra],spaceType:'OFFICE',roomType:'Office',style:'Modern',width:4,length:5,colors:['Bej'],requirements:'Divarlar: açıq; işıqlandırma: isti; xüsusi mebel: iş masası',budget:3000};
+ const response=await page.request.post('/api/projects',{headers:{origin},data:payload});expect(response.status()).toBe(200);const project=(await response.json()).data;
+ expect(project.galleryIds).toEqual([extra]);expect(project.spaceType).toBe('OFFICE');
+ await page.goto(`/dashboard/projects/${project.id}`);await expect(page.getByRole('heading',{name:'Bu dizaynı kim həyata keçirə bilər?'})).toBeVisible();
+ const stranger=await browser.newContext();const email=`${run}_stranger@example.test`;emails.push(email);await stranger.request.post(`${origin}/api/auth/register`,{headers:{origin},data:{name:'Stranger',email,password:`QA_${randomUUID()}!`,role:'CUSTOMER'}});
+ const foreign=await upload(stranger.request);expect((await page.request.post('/api/projects',{headers:{origin},data:{...payload,galleryIds:[foreign]}})).status()).toBe(403);
+ const denied=await stranger.request.get(`${origin}/project-brief/${project.id}`);const deniedBody=await denied.text();expect(deniedBody).toContain("Səhifə tapılmadı.");expect(deniedBody).not.toContain(payload.title);
+ const store=(await pool.query('SELECT s.id,u.email FROM "Store" s JOIN "User" u ON u.id=s."ownerId" WHERE u.email=$1 AND s.approval=\'APPROVED\'',['store_owner@demo.mekan.test'])).rows[0];expect(store).toBeTruthy();
+ const seller=await browser.newContext();expect((await seller.request.post(`${origin}/api/auth/login`,{headers:{origin},data:{email:store.email,password:process.env.SEED_DEMO_PASSWORD}})).status()).toBe(200);
+ expect((await seller.request.get(`${origin}/api/images/${extra}`)).status()).toBe(404);
+ expect((await page.request.post('/api/inquiries',{headers:{origin},data:{storeId:store.id,projectId:project.id,message:`${run} custom production quote`}})).status()).toBe(200);
+ expect((await seller.request.get(`${origin}/api/images/${extra}`)).status()).toBe(200);expect((await seller.request.get(`${origin}/project-brief/${project.id}`)).status()).toBe(200);
+ const service=(await pool.query('SELECT s.id,u.email FROM "DesignerService" s JOIN "DesignerProfile" d ON d.id=s."designerId" JOIN "User" u ON u.id=d."userId" WHERE u.email=$1 AND s.active=true LIMIT 1',['designer@demo.mekan.test'])).rows[0];expect(service).toBeTruthy();
+ expect((await page.request.post('/api/designer-request',{headers:{origin},data:{serviceId:service.id,projectId:project.id,brief:`${run} implementation quote`,contact:'qa@example.test'}})).status()).toBe(200);
+ const designer=await browser.newContext();await designer.request.post(`${origin}/api/auth/login`,{headers:{origin},data:{email:service.email,password:process.env.SEED_DEMO_PASSWORD}});
+ expect((await designer.request.get(`${origin}/project-brief/${project.id}`)).status()).toBe(200);expect((await designer.request.get(`${origin}/api/images/${primary}`)).status()).toBe(200);expect((await stranger.request.get(`${origin}/api/images/${extra}`)).status()).toBe(404);
+ expect((await stranger.request.post(`${origin}/api/inquiries`,{headers:{origin},data:{storeId:store.id,projectId:project.id,message:'Unauthorized project sharing'}})).status()).toBe(404);
+ await seller.close();await designer.close();await stranger.close();
+});

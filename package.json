@@ -1,0 +1,73 @@
+{
+  "name": "mekan-ai",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "prisma generate && next build",
+    "start": "next start --hostname 127.0.0.1",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:e2e": "playwright test",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
+    "worker": "tsx scripts/worker.ts",
+    "ai:local": ".local-ai/venv/bin/python local_ai/server.py",
+    "ai:prepare": ".local-ai/venv/bin/python local_ai/prepare.py",
+    "demo": "node scripts/demo.mjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "latest",
+    "@aws-sdk/s3-request-presigner": "latest",
+    "@hookform/resolvers": "latest",
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
+    "@radix-ui/react-dialog": "latest",
+    "bcryptjs": "latest",
+    "class-variance-authority": "latest",
+    "clsx": "latest",
+    "dotenv": "latest",
+    "konva": "^10.7.1",
+    "lucide-react": "latest",
+    "next": "16.4.0",
+    "nodemailer": "latest",
+    "pg": "latest",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-hook-form": "latest",
+    "react-konva": "^19.3.0",
+    "recharts": "latest",
+    "sharp": "latest",
+    "sonner": "latest",
+    "tailwind-merge": "latest",
+    "use-image": "^1.1.4",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@playwright/test": "latest",
+    "@tailwindcss/postcss": "latest",
+    "@types/node": "latest",
+    "@types/nodemailer": "latest",
+    "@types/pg": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "16.4.0",
+    "prisma": "7.10.0",
+    "tailwindcss": "latest",
+    "tsx": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
+  },
+  "overrides": {
+    "@prisma/config": {
+      "deepmerge-ts": "8.0.2"
+    },
+    "prisma": {
+      "mysql2": "3.24.5"
+    }
+  }
+}
