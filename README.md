@@ -5,7 +5,7 @@
 [Təqdimat ssenarisi](docs/HACKATHON.md) · [Arxitektura](docs/ARCHITECTURE.md) · [Yoxlama nəticələri](docs/AI_DEMO_VERIFICATION.md) · [Deploy təlimatı](docs/DEPLOYMENT.md)
 
 <!-- review-url:start -->
-**Onlayn demo:** yayımlanma gözlənilir. [Deploy vəziyyətinə baxın](https://github.com/yusifmmdv/Mekan-AI/actions/workflows/deploy-review.yml). Uğurlu deploy-dan sonra real link burada yenilənir.
+**[İnteraktiv demoya baxın →](https://yusifmmdv.github.io/Mekan-AI/)** · Giriş tələb olunmur. Hazır AI nümunələri və şəkildə mebel hover təqdimatı.
 <!-- review-url:end -->
 
 **Boş otaqdan dizayna, dizayndan sifarişə.** Azərbaycan dilində ev, ofis və yaradıcı studiyalar üçün AI interyer dizaynı və mebel kəşfi startup prototipi.
