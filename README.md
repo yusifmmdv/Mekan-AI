@@ -2,141 +2,81 @@
 
 ### Boş otaqdan dizayna, dizayndan həyata.
 
-[Təqdimat ssenarisi](docs/HACKATHON.md) · [Arxitektura](docs/ARCHITECTURE.md) · [Yoxlama nəticələri](docs/AI_DEMO_VERIFICATION.md) · [Deploy təlimatı](docs/DEPLOYMENT.md)
+**Mekan AI** — ev, ofis və yaradıcı məkanlar üçün süni intellekt əsaslı interyer dizaynı və mebel kəşfi platformasıdır.
 
-<!-- review-url:start -->
-**[İnteraktiv demoya baxın →](https://yusifmmdv.github.io/Mekan-AI/)** · Giriş tələb olunmur. Hazır AI nümunələri və şəkildə mebel hover təqdimatı.
-<!-- review-url:end -->
+İstifadəçi otağın şəklini yükləyir, dizayn üslubunu və büdcəsini seçir, interyer konsepsiyası əldə edir və uyğun mebelləri kəşf edərək layihəsini həyata keçirmək üçün növbəti addımları ata bilir.
 
-**Boş otaqdan dizayna, dizayndan sifarişə.** Azərbaycan dilində ev, ofis və yaradıcı studiyalar üçün AI interyer dizaynı və mebel kəşfi startup prototipi.
+[**İnteraktiv demoya baxın →**](https://yusifmmdv.github.io/Mekan-AI/)
 
-![Mekan AI — hazır ev dizaynı](public/demo/home.png)
+![Mekan AI — interyer dizayn nümunəsi](public/demo/home.png)
 
-İstifadəçi otaq şəklini yükləyir, üslub və büdcə seçir, AI dizaynı yaradır. Nəticədə mebelin üzərinə gələndə **şəklin üzərində** oxşar kataloq məhsulu, AZN qiyməti və satıcı kartı açılır. Məhsul səbətə əlavə edilir, mağazaya sifariş sorğusu və dizaynerə layihə brifi göndərilir.
+## Problem
 
-## Problem və həll
+İnteryer dizaynı zamanı uyğun üslub seçmək, büdcəyə uyğun mebel tapmaq və layihəni həyata keçirəcək mütəxəssis müəyyənləşdirmək çox vaxt ayrı-ayrı proseslər tələb edir.
 
-Otağın necə görünəcəyini təsəvvür etmək, uyğun mebel tapmaq və dizaynı həyata keçirəcək mütəxəssis seçmək ayrı-ayrı proseslərdir. Mekan AI bunları bir istifadəçi axınında birləşdirir:
+Mekan AI bu mərhələləri vahid platformada birləşdirir.
 
-**Otaq şəkli → AI dizaynı → şəkildə mebel kəşfi → sifariş sorğusu → dizaynerlə icra.**
+## Həllimiz
 
-## Məhsulun imkanları
+- **AI interyer dizaynı** — otaq şəkli, üslub və büdcə əsasında dizayn konsepsiyası.
+- **Vizual mebel kəşfi** — dizayn şəklində mebel elementlərinin üzərinə gəldikdə uyğun məhsul kartları.
+- **Məhsul kataloqu** — mebel qiymətləri, satıcı məlumatları və oxşar məhsullar.
+- **Sifariş sorğuları** — seçilmiş məhsullar əsasında mağazaya müraciət.
+- **Dizaynerlə əməkdaşlıq** — layihənin icrası üçün mütəxəssisə müraciət.
+- **Biznes kabinetləri** — müştərilər, mağazalar, dizaynerlər və administratorlar üçün fərqli imkanlar.
 
-| İmkan | İstifadəçi təcrübəsi |
-| --- | --- |
-| AI interyer dizaynı | Ev, ofis və studiya üçün şəkil, üslub və büdcə əsasında dizayn |
-| Şəkildə mebel kəşfi | Mouse və ya toxunuşla kart birbaşa şəklin üzərində açılır |
-| Qiymət və satıcı | Oxşar kataloq məhsulu, AZN qiyməti və satıcı |
-| Səbət və sifariş | Məhsul seçimi və mağazaya sifariş sorğusu |
-| Dizaynerlə icra | Layihəni həyata keçirəcək mütəxəssisə müraciət |
-| Biznes kabinetləri | Müştəri, mağaza, dizayner və administrator rolları |
+## Necə işləyir?
 
-Mebel uyğunluğu oxşar məhsul səviyyəsindədir; dəqiq marka/model identifikasiyası kimi göstərilmir. Sifarişlər bazada saxlanılan sorğulardır; onlayn ödəniş tutulmur.
+1. Otağın şəklini yüklə.
+2. Üslub və büdcəni seç.
+3. AI vasitəsilə interyer dizaynı yarat.
+4. Şəkildəki mebelləri araşdır və uyğun məhsulları seç.
+5. Sifariş sorğusu göndər və ya dizaynerlə əlaqə yarat.
 
-## Münsiflər üçün 60 saniyəlik baxış
+## İnteraktiv demo
 
-1. İnteraktiv nümunələrdə **Ev / Ofis / Studiya** seçin.
-2. **Boş otaq / AI dizayn** düymələri ilə görüntüləri müqayisə edin.
-3. Şəkildə divan, masa və ya kreslonun üzərinə gəlin: qiymət və satıcı kartı şəklin üzərində açılır. Mobil cihazda toxunun.
-4. Tam lokal demoda nümunəni şəxsi layihə kimi açın, mebeli səbətə əlavə edin, sifariş və dizayner müraciəti yaradın.
+Münsiflər platformanın əsas istifadəçi ssenarisini interaktiv demoda sınaqdan keçirə bilərlər.
 
-Açıq təqdimat build-i məhsulun mövcud React komponentlərini istifadə edir və giriş tələb etmir. Burada hazır nümunələr və hover işləyir; canlı AI, hesab, səbət və sifariş üçün tam tətbiq lazımdır.
+- Ev, ofis və studiya dizayn nümunələrinə baxın.
+- İlkin otaq görüntüsü ilə dizayn nəticəsini müqayisə edin.
+- Şəkildəki mebel elementlərinin üzərinə gəlin və məhsul kartlarını araşdırın.
 
-## Ən sürətli baxış — AI tokeni və baza olmadan
+**Qeyd:** Açıq demo əvvəlcədən hazırlanmış nümunələrdən istifadə edir. Canlı AI generasiyası, hesab, səbət və sifariş funksiyaları tam tətbiq mühitində nəzərdə tutulub. Məhsul və qiymət məlumatları təqdimat nümunələridir; platforma hazırda onlayn ödəniş qəbul etmir.
 
-Node.js 24+ tələb olunur.
+## Texnologiyalar
 
-```sh
-npm ci
-cp .env.example .env
-npm run db:generate
-npm run dev
-```
+- **Frontend:** Next.js, React, TypeScript
+- **Backend:** Next.js
+- **Verilənlər bazası:** PostgreSQL, Prisma
+- **AI dizaynı:** Hugging Face, Qwen Image Edit
+- **Mebel aşkarlanması:** Grounding DINO
+- **İnfrastruktur:** Worker əsaslı emal növbəsi və lokal və ya S3 şəkil yaddaşı
 
-`http://localhost:3000` — startup əsas səhifəsi; `http://localhost:3000/examples` — ev/ofis/studiya nümunələri və şəkildə hover kartları. Yeni brauzer sessiyasında bu iki səhifə PostgreSQL və HF tokeni olmadan açılır. Səbət, şəxsi layihə, sifariş və dizayner müraciəti üçün aşağıdakı tam quraşdırmanı edin.
+## Təhlükəsizlik və etibarlılıq
 
-Hazır nümunələr əvvəlcədən AI ilə yaradılıb; canlı generasiya nəticəsi kimi göstərilmir. Məhsul, qiymət və satıcı nümunələri demo kimi işarələnir. Nümunə mebel sahələri əl ilə yoxlanıb; canlı nəticələrdə avtomatik detector işləyir. [Nümunələrin mənbəyi və promptları](docs/DEMO_ASSETS.md).
+- API açarları və məxfi konfiqurasiya məlumatları repoya daxil edilmir.
+- Şəkil generasiyası və mebel aşkarlanması ayrı mərhələlərdə həyata keçirilir.
+- AI xidmətində xəta baş verdikdə əvvəlcədən hazırlanmış demo nəticəsi yeni generasiya kimi təqdim edilmir.
+- Sifarişlər ödəniş əməliyyatı deyil, verilənlər bazasında saxlanılan sorğulardır.
 
-## Tam demo — baza, səbət, sifariş və dizayner
+## Layihənin yoxlanılması
 
-Docker Desktop işlək olmalıdır. Əvvəl yuxarıdakı `npm ci` addımını yerinə yetirin.
+Layihədə kod keyfiyyəti, tiplərin yoxlanılması, testlər və build prosesi üçün avtomatlaşdırılmış yoxlamalar mövcuddur.
 
-```sh
-npm run demo:setup
-npm run demo
-```
-
-`demo:setup` çatışmayan `.env` faylını yaradır, mövcud bazanı istifadə edir və ya yalnız PostgreSQL konteynerini başladır, əlavəedici miqrasiyaları tətbiq edir və nümunə kataloq, dizayner və üç hazır layihə yaradır. Baza artıq qurulubsa: `npm run demo:setup -- --existing-db`.
-
-`demo` worker və tətbiqi başladır, Chrome/Playwright brauzerində demo müştəri hesabı ilə nümunələri və studiyanı açır. Chrome yoxdursa əvvəl `npx playwright install chromium` işlədin. Demo şifrəsi `.env` daxilində `SEED_DEMO_PASSWORD` sətrindədir; ən azı 12 simvol tələb olunur. Boş şifrə setup zamanı avtomatik yaradılır. Demo hesabları:
-
-- `customer@demo.mekan.test` — layihə, səbət və sifariş.
-- `store_owner@demo.mekan.test` — mağazaya daxil olan sifariş və sorğular.
-- `designer@demo.mekan.test` — layihə ilə dizayner müraciətləri.
-- `admin@demo.mekan.test` — moderasiya və idarəetmə.
-
-Nümunədə **“Layihəni aç və seç”** və ya **“Nümunəni layihə kimi aç”** seçin. Şəxsi layihədə hover kartından mebeli səbətə əlavə edin və sifariş sorğusu göndərin. Həmin səhifədə “Bu dizaynı kim həyata keçirə bilər?” bölməsindən dizaynerə müraciət edin. Ödəniş gateway-i yoxdur; sifariş və müraciətlər real PostgreSQL qeydləridir.
-
-## Canlı pulsuz AI
-
-[Pulsuz Hugging Face hesabı](https://huggingface.co/join) və [access token](https://huggingface.co/settings/tokens) yaradın. Tokeni yalnız `.env` faylında saxlayın:
-
-```dotenv
-AI_PROVIDER=huggingface
-HF_TOKEN=your_hugging_face_token
-ALLOW_PAID_AI=false
-PAID_AI_ENABLED=false
-```
-
-Rəsmi [Qwen Image Edit Space-i](https://huggingface.co/spaces/Qwen/Qwen-Image-Edit) şəkil + prompt ilə çağırılır. Billed Inference Providers API-si və ödənişli alternativ istifadə edilmir. [Pulsuz ZeroGPU istifadəsində kvota və növbə məhdudiyyətləri var](https://huggingface.co/docs/hub/spaces-zerogpu); servis işləməsə xəta göstərilir, hazır nümunə yeni nəticə kimi əvəz edilmir. Real ev/ofis/studiya şəkillərində keyfiyyət ayrıca yoxlanmalıdır. Tətbiq və worker tokeni əlavə etdikdən sonra yenidən başladılmalıdır:
-
-```sh
-npm run dev
-# Ayrı terminalda:
-npm run worker
-```
-
-Brauzer ünvanı `.env` daxilində `APP_URL` ilə eyni origin olmalıdır. İlk setup nümunələrdə `http://localhost:3000` istifadə edir. Şəkillər xarici Qwen xidmətinə göndərilir; şəxsi yaddaş və tətbiqdə giriş icazələri qorunur.
-
-### Canlı nəticədə avtomatik mebel aşkarlama
-
-Python 3.11+ üçün virtual mühit və pulsuz açıq Grounding DINO modelini hazırlayın. Mac/Linux:
-
-```sh
-python3 -m venv .local-ai/venv
-.local-ai/venv/bin/python -m pip install -r local_ai/detection-requirements.txt
-npm run ai:detect:prepare
-```
-
-Windows-da virtual mühitin Python yolu `.local-ai/venv/Scripts/python.exe` olur; pip əmrində həmin yolu istifadə edin. Worker bu yolu avtomatik seçir, yaxud `DETECTOR_PYTHON` ilə təyin etmək olar.
-
-Şəkil generasiyası tamamlananda dərhal saxlanılır. Worker ayrıca mebeli aşkarlayır, koordinatları və oxşar aktiv kataloq məhsullarını bazada saxlayır. Analiz alınmasa şəkil itmir; “Mebelləri analiz et” ilə yenidən cəhd etmək olur. Detector model çəkiləri əvvəlcədən endirilir; şəkil analizi lokal aparılır.
-
-## Texnologiya və yoxlama
-
-Next.js 16 / React 19, TypeScript, PostgreSQL / Prisma, məxfi lokal və ya S3 şəkil yaddaşı, davamlı generasiya və analiz növbəsi. 2D redaktor MVP-dən çıxarılıb; köhnə saxlanmış məlumatlar silinmir.
-
-```sh
+```bash
 npm run lint
 npm run typecheck
 npm test
 npm run build
-npm run test:public
-# Qurulmuş development/test bazası ilə, worker-i dayandırdıqdan sonra:
-npm run test:integration
-npm run test:e2e
 ```
 
-[Hakaton ssenarisi](docs/HACKATHON.md) · [Cari yoxlama vəziyyəti](docs/AI_DEMO_VERIFICATION.md) · [Arxitektura](docs/ARCHITECTURE.md).
+## Sənədlər
 
-GitHub Actions lokal unit/integration/brauzer axınlarını yoxlayır; canlı xarici AI çağırışı etmir. Heç bir API açarı, `.env`, şəxsi şəkil, model çəkisi və lokal baza repoya daxil edilmir.
+- [Hakaton təqdimat ssenarisi](docs/HACKATHON.md)
+- [Arxitektura](docs/ARCHITECTURE.md)
+- [AI demo və yoxlama nəticələri](docs/AI_DEMO_VERIFICATION.md)
+- [Quraşdırma və deploy təlimatı](docs/DEPLOYMENT.md)
 
-## Onlayn təqdimatı yayımlamaq
+---
 
-GitHub CLI-də hesabınıza giriş varsa:
-
-```sh
-npm run deploy:review
-```
-
-Əmr layihəni push edir, GitHub Pages-i hazırlayır, deploy nəticəsini gözləyir və uğurlu URL-i README-yə əlavə edir. Giriş yoxdursa əvvəl `gh auth login` işlədin. Açıq təqdimatda ev/ofis/studiya nümunələri və şəkildə mebel hover işləyir. Tam tətbiqin PostgreSQL, worker və şəxsi storage tələbləri [deploy təlimatında](docs/DEPLOYMENT.md) göstərilir.
+**Mekan AI — interyer ideyasından real layihəyə gedən yolu sadələşdirir.**
