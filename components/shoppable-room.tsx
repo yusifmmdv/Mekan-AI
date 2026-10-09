@@ -45,14 +45,14 @@ export function ShoppableRoom({ before, after, objects, products, preview = fals
         <div className="room-view-switch" aria-label="Otaq görünüşü"><button type="button" aria-pressed={!original} onClick={() => setOriginal(false)}>AI dizayn</button><button type="button" aria-pressed={original} onClick={() => { setOriginal(true); setSelected(null); }}>Boş otaq</button></div>
         <span className="badge">{preview ? "Hazır AI nümunəsi" : "Sizin dizaynınız"}</span>
       </div>
-      <div ref={photo} className="room-photo" data-testid="shoppable-room-photo" onMouseMove={e => { if (e.target === photo.current?.firstElementChild) setSelected(null); }} onMouseLeave={() => { if (!photo.current?.contains(document.activeElement)) setSelected(null); }}>
-        <img src={original ? before : after} alt={original ? "Dizayndan əvvəl boş otaq" : "AI tərəfindən dizayn edilmiş otaq"} width={1536} height={1024} />
+      <div ref={photo} className="room-photo" style={{ position: "relative", overflow: "hidden", borderRadius: 20 }} data-testid="shoppable-room-photo" onMouseMove={e => { if (e.target === photo.current?.firstElementChild) setSelected(null); }} onMouseLeave={() => { if (!photo.current?.contains(document.activeElement)) setSelected(null); }}>
+        <img src={original ? before : after} style={{ display: "block", width: "100%", height: "auto" }} alt={original ? "Dizayndan əvvəl boş otaq" : "AI tərəfindən dizayn edilmiş otaq"} width={1536} height={1024} />
         {!original && objects.map((o, i) => <button key={o.id} type="button" className={`furniture-hotspot ${selected === o.id ? "selected" : ""}`}
-          style={{ left: `${o.box[0] * 100}%`, top: `${o.box[1] * 100}%`, width: `${o.box[2] * 100}%`, height: `${o.box[3] * 100}%`, zIndex: Math.round(100 - o.box[2] * o.box[3] * 90) }}
+          style={{ position: "absolute", left: `${o.box[0] * 100}%`, top: `${o.box[1] * 100}%`, width: `${o.box[2] * 100}%`, height: `${o.box[3] * 100}%`, zIndex: Math.round(100 - o.box[2] * o.box[3] * 90) }}
           aria-label={`${furnitureLabels[o.category]} ${i + 1}: oxşar məhsulları göstər`} aria-expanded={selected === o.id} aria-controls={panelId}
-          onMouseEnter={e => reveal(o, e)} onFocus={() => reveal(o)} onClick={e => reveal(o, e.detail ? e : undefined)}><span className="hotspot-pin">{i + 1}</span></button>)}
+          onMouseEnter={e => reveal(o, e)} onFocus={() => reveal(o)} onClick={e => reveal(o, e.detail ? e : undefined)}><span className="hotspot-pin" style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", opacity: selected === o.id ? 1 : 0 }}>{i + 1}</span></button>)}
         {!original && object && <div className="room-hover-card" id={panelId} role="dialog" aria-label={`${furnitureLabels[object.category]} üçün məhsullar`}
-          style={{ width: cardWidth, maxHeight: cardHeight, left: Math.max(8, Math.min(point.x * size.width + 16, size.width - cardWidth - 8)), top: Math.max(8, Math.min(point.y * size.height + 16, size.height - cardHeight - 8)) }}>
+          style={{ position: "absolute", zIndex: 150, background: "var(--surface, #fff)", borderRadius: 14, padding: 14, overflow: "auto", width: cardWidth, maxHeight: cardHeight, left: Math.max(8, Math.min(point.x * size.width + 16, size.width - cardWidth - 8)), top: Math.max(8, Math.min(point.y * size.height + 16, size.height - cardHeight - 8)) }}>
           <div className="room-hover-header"><div><strong>{furnitureLabels[object.category]}</strong><small>Oxşar kataloq məhsulu</small></div><button type="button" className="icon-btn" aria-label="Mebel kartını bağla" onClick={() => setSelected(null)}><X size={16} aria-hidden="true" /></button></div>
           {!matches.length && <p className="room-hover-empty">Uyğun satış məhsulu tapılmadı. Dizaynerə və ya mağazaya layihə üzrə sorğu göndərin.</p>}
           {matches.map(p => <article className="room-hover-product" key={p.id}>

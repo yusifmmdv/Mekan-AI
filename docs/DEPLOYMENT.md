@@ -28,4 +28,6 @@ The repository Dockerfile serves the web app on `0.0.0.0` and respects `PORT`. P
 
 ## Current status
 
-Direct GitHub API/push and the Sites source endpoint fail DNS resolution in this execution environment. A Sites project was registered but no version was published. Its identity is retained at `/Users/yusif/mekan-ai-public/.openai/hosting.json`; reuse it if resuming Sites deployment. No live URL is claimed until deployment succeeds.
+The public interactive presentation is deployed at **https://yusifmmdv.github.io/Mekan-AI/**. GitHub Pages build and deployment succeeded; the live page returned HTTP 200 and browser checks confirmed hydration, on-photo product cards and office sample switching. README and the repository Website field point to the deployed page.
+
+The full application backend is not deployed. The public presentation does not invoke live AI or submit orders. An earlier Sites registration was not published; its identity remains in `/Users/yusif/mekan-ai-public/.openai/hosting.json` if that path is resumed.
