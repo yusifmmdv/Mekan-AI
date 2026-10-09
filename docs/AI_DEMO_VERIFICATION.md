@@ -15,9 +15,9 @@ Date: 9 October 2026. This report supersedes older UI/editor completion claims f
 
 - The official free Qwen Space adapter is implemented against the published Gradio `infer` interface, with server-only authentication, prompt rewriting disabled, timeout, validated same-origin image download and explicit quota/error states. A real remote room edit was **not** run: this environment cannot resolve/connect to the remote host and `HF_TOKEN` is not configured.
 - Grounding DINO local detection and durable analysis queue are implemented. The detection model weights have not been downloaded or run in this session. Run the Python preparation steps in README before testing detection on a fresh result.
-- The additive furniture-analysis migration is supplied and Prisma client generation passes. Migration execution cannot reach local PostgreSQL (`P1001`; a direct database attempt also returned `EPERM`). Apply migrations and seed from the user's normal Terminal.
-- The initial sandbox blocked browser launch. After network and execution permissions became available, the public-example Playwright test passed on the actual local app: on-photo hover bounds, keyboard focus/Escape, sample switching, before view and mobile touch. Cart/order persistence and designer handoff runtime verification remains separate.
-- GitHub Actions is supplied to exercise PostgreSQL integration and browser tests without invoking live AI. That workflow has not yet run on GitHub.
+- The furniture-analysis migration and Prisma client generation now pass against the local development database after execution permissions became available. The local server was restarted to replace its stale Prisma instance.
+- The initial sandbox blocked browser launch. After network and execution permissions became available, the public-example Playwright test passed on the actual local app: on-photo hover bounds, keyboard focus/Escape, sample switching, before view and mobile touch. The full prepared-example Playwright flow also passed: private project import, hover-to-cart, persisted order request, designer handoff and outsider access denial. These tests make no paid AI calls.
+- GitHub Actions runs PostgreSQL integration and browser tests without live AI. An initial browser run exposed a hover-card dismissal defect and test cleanup dependency issue; these were corrected and both prepared-example browser tests passed locally. The latest remote CI result is available in repository Actions.
 
 ## Before presenting live AI
 

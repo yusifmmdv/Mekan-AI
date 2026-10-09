@@ -21,6 +21,7 @@ test.afterAll(async () => {
     await pool.query('DELETE FROM "Order" WHERE "userId"=$1', [user.id]);
     await pool.query('DELETE FROM "DesignerRequest" WHERE "userId"=$1', [user.id]);
     await pool.query('DELETE FROM "Inquiry" WHERE "userId"=$1', [user.id]);
+    await pool.query('DELETE FROM "DesignGeneration" WHERE "projectId" IN (SELECT id FROM "DesignProject" WHERE "userId"=$1)', [user.id]);
     await pool.query('DELETE FROM "DesignProject" WHERE "userId"=$1', [user.id]);
     await pool.query('DELETE FROM "ImageAsset" WHERE "ownerId"=$1', [user.id]);
     for (const asset of assets) await unlink(path.resolve(process.env.STORAGE_PATH || ".storage", asset.key)).catch(() => {});

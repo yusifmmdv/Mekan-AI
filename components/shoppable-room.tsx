@@ -45,7 +45,7 @@ export function ShoppableRoom({ before, after, objects, products, preview = fals
         <div className="room-view-switch" aria-label="Otaq görünüşü"><button type="button" aria-pressed={!original} onClick={() => setOriginal(false)}>AI dizayn</button><button type="button" aria-pressed={original} onClick={() => { setOriginal(true); setSelected(null); }}>Boş otaq</button></div>
         <span className="badge">{preview ? "Hazır AI nümunəsi" : "Sizin dizaynınız"}</span>
       </div>
-      <div ref={photo} className="room-photo" style={{ position: "relative", overflow: "hidden", borderRadius: 20 }} data-testid="shoppable-room-photo" onMouseMove={e => { if (e.target === photo.current?.firstElementChild) setSelected(null); }} onMouseLeave={() => { if (!photo.current?.contains(document.activeElement)) setSelected(null); }}>
+      <div ref={photo} className="room-photo" style={{ position: "relative", overflow: "hidden", borderRadius: 20 }} data-testid="shoppable-room-photo" onClick={e => { if (e.target === photo.current?.firstElementChild) setSelected(null); }}>
         <img src={original ? before : after} style={{ display: "block", width: "100%", height: "auto" }} alt={original ? "Dizayndan əvvəl boş otaq" : "AI tərəfindən dizayn edilmiş otaq"} width={1536} height={1024} />
         {!original && objects.map((o, i) => <button key={o.id} type="button" className={`furniture-hotspot ${selected === o.id ? "selected" : ""}`}
           style={{ position: "absolute", left: `${o.box[0] * 100}%`, top: `${o.box[1] * 100}%`, width: `${o.box[2] * 100}%`, height: `${o.box[3] * 100}%`, zIndex: Math.round(100 - o.box[2] * o.box[3] * 90) }}
